@@ -9,19 +9,23 @@ matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
+#arduino_port = '/dev/ttyUSB0'
+arduino_port = '/dev/ttyACM0' 
 from arduino import Arduino
 
 class MainWindow(wx.Frame):
 	""" Main frame of the application
 	"""
+	
 	title = 'Data Acquisition'
+    
     
 	def __init__(self):
 		wx.Frame.__init__(self, None, title=self.title, size=(650,570))
         
 		# Try Arduino
 		try:
-			self.arduino = Arduino('/dev/ttyUSB0', 115200)
+			self.arduino = Arduino(arduino_port, 115200)
 		except:
 			print 'unable to connect to arduino'
 
@@ -36,6 +40,7 @@ class MainWindow(wx.Frame):
 		self.Bind(wx.EVT_TIMER, self.on_timer, self.timer)        
 		self.rate = 500
 		self.timer.Start(self.rate) 
+
 
 	def create_main_panel(self):
         
@@ -63,6 +68,7 @@ class MainWindow(wx.Frame):
 		self.SetAutoLayout(True)
 		self.SetSizer(vertical)
 		self.Layout()
+  
         
 	def init_plots(self):
 		self.plotMem = 50 # how much data to keep on the plot
@@ -74,11 +80,13 @@ class MainWindow(wx.Frame):
 		self.axes = [] #subplot list
 		for i in range(1,7):
 			self.axes.append(self.fig.add_subplot(3,2,i, xticks=[], yticks=[0, 500, 1000]))
+    
         
 	def poll(self):
-		#self.dataRow = self.arduino.poll()
-		self.dataRow = (np.random.rand(6)*1000).tolist()
+		self.dataRow = self.arduino.poll()
+		#self.dataRow = (np.random.rand(6)*1000).tolist()
 		#print self.dataRow
+    
     
 	def save(self):
 		file = open(self.output_file, 'a')
@@ -86,6 +94,7 @@ class MainWindow(wx.Frame):
 			file.write(str(self.dataRow[i]) + ',')
 		file.write(str(self.dataRow[5]) + '\n')
 		file.close()
+    
         
 	def draw(self):        
 		self.plotData.append(self.dataRow) #adds to the end of the list
@@ -106,6 +115,7 @@ class MainWindow(wx.Frame):
 		# draw
 		self.PlotsCanvas.draw()
      
+     
 	def on_timer(self, event):
 		self.poll()
 		
@@ -113,6 +123,7 @@ class MainWindow(wx.Frame):
 			self.save()
 		
 		self.draw()
+
 
 	def on_update_btn_record(self, event):
 		label = "Stop" if self.recording else "Record"
@@ -172,8 +183,10 @@ class MainWindow(wx.Frame):
 
 		return
         
+        
 	def on_exit(self, event):
 		self.Destroy()   
+  
         
 if __name__ == '__main__':
 	app = wx.App()

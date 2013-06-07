@@ -3,10 +3,8 @@ import serial
 class Arduino(object):
     """ Class that handles acquiring the serial data 
         from the arduino for Data Acquisiton
-        
-        CH0 and CH1 on the arduino are reserved for
-        serial so they are not part of the DAQ
     """
+    
     def __init__(self, usbport, baud):
         self.ser = serial.Serial(
              port=usbport,
@@ -27,10 +25,6 @@ class Arduino(object):
         
         # now read all lines sent by the Arduino
         data = []
-        
-        # read digital channels
-        for i in range(2,13+1): # read channels 2 to 13, range stops 1 shorth thus plus 1
-            data.append( int(self.ser.readline()[0:-2]) )
         
         # read analog channels
         for i in range(0,5+1): # now read the 6 analog channel
