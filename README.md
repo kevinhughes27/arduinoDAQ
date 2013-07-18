@@ -25,3 +25,7 @@ py serial
 
 matplotlib  
 	sudo apt-get install python-matplotlib
+
+
+OSX Install Instructions:
+http://rwsarduino.blogspot.ca/2013/07/python-arduino-daq-on-mac.html 
