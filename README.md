@@ -4,6 +4,8 @@ ArduinoDAQ
 by: Kevin Hughes, June 2013
 
 
+![usage](https://kevinhughes27.files.wordpress.com/2013/06/arduino_daq_test.png)
+
 Description
 -----------
 
