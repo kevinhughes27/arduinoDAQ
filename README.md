@@ -4,7 +4,7 @@ ArduinoDAQ
 by: Kevin Hughes, June 2013
 
 
-![usage](http://kevinhughes.ca/images/arduino_daq_test.png)
+![usage](http://kevinhughes.ca/images/posts/arduino_daq_test.png)
 
 Description
 -----------
