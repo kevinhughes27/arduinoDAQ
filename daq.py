@@ -10,7 +10,9 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 
 #arduino_port = '/dev/ttyUSB0'
-arduino_port = '/dev/ttyACM0'
+#arduino_port = '/dev/ttyACM0'
+#For Windows
+arduino_port = 'COM4'
 from arduino import Arduino
 
 class MainWindow(wx.Frame):
@@ -27,7 +29,7 @@ class MainWindow(wx.Frame):
         try:
             self.arduino = Arduino(arduino_port, 115200)
         except:
-            print 'unable to connect to arduino'
+            print ('unable to connect to arduino')
 
         self.create_main_panel()
 
@@ -108,7 +110,7 @@ class MainWindow(wx.Frame):
             ax.plot(range(0,self.plotMem), x[:,i],'k')
             ax.set_title('CH A'+str(i))
             ax.set_ylim(0,1000)
-            ax.set_yticks([0, 500, 1000])
+            ax.set_yticks([0, 250, 500, 750, 1000])
             ax.set_xticks([])
             ax.hold(False)
 
@@ -150,12 +152,13 @@ class MainWindow(wx.Frame):
                 self.recording = False
 
             else:
-                self.output_file = self.txt_output_file.GetString(0,-1)
+                #self.output_file = self.txt_output_file.GetString(0,-1)
+                self.output_file = self.txt_output_file.GetLineText(0)
                 self.t = 0
 
                 # check if file exists - ie may be saving over data
                 if os.path.isfile(self.output_file):
-
+                    print(self.output_file)
                     msg = wx.MessageDialog(self, 'Output Directory Exists - Overwrite Data?', 'Yes or No', wx.YES_NO | wx.ICON_QUESTION)
                     result = msg.ShowModal() == wx.ID_YES
                     msg.Destroy()
