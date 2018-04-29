@@ -21,7 +21,7 @@ class Arduino(object):
 
     def poll(self):
         self.ser.flush() #flush before sending signal
-        self.ser.write('w') #send signal telling Arduino to send data
+        self.ser.write("w".encode('ascii')) #send signal telling Arduino to send data
         
         # now read all lines sent by the Arduino
         data = []
