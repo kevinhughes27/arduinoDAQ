@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os
+import os, platform
 import time
 import numpy as np
 import wx
@@ -8,12 +8,20 @@ import matplotlib
 matplotlib.use('WXAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
-
-#arduino_port = '/dev/ttyUSB0'
-#arduino_port = '/dev/ttyACM0'
-#For Windows
-arduino_port = 'COM4'
 from arduino import Arduino
+
+local_platf = platform.system()
+
+if local_platf == 'Linux':
+    arduino_port = '/dev/ttyACM0'
+if local_platf == 'Windows':
+    # For Windows
+    arduino_port = 'COM4'
+else:
+    # Error windows. No Mac version yet
+
+    print ("No Mac version implemented yet. Default to Linux.")
+    arduino_port = '/dev/ttyACM0'
 
 class MainWindow(wx.Frame):
     """ Main frame of the application
@@ -25,15 +33,31 @@ class MainWindow(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, title=self.title, size=(650,570))
 
+        local_platf = platform.system()
+        if local_platf == 'Linux':
+            arduino_port = '/dev/ttyACM0'
+        if local_platf == 'Windows':
+            # For Windows
+            arduino_port = 'COM4'
+        else:
+            # Error windows. No Mac version yet
+            msg = wx.MessageDialog(self, 'No Mac version implemented yet. Default to Linux.', 'Warning', wx.OK | wx.ICON_WARNING)
+            msg.ShowModal() == wx.ID_YES
+            msg.Destroy()
+            arduino_port = '/dev/ttyACM0'
+
         # Try Arduino
         try:
             self.arduino = Arduino(arduino_port, 115200)
         except:
-            print ('unable to connect to arduino')
+            msg = wx.MessageDialog(self, 'Unable to connect to arduino. Check port or connection.', 'Error', wx.OK | wx.ICON_ERROR)
+            msg.ShowModal() == wx.ID_YES
+            msg.Destroy()
 
         self.create_main_panel()
 
         self.recording = False
+        self.output_file = ''
 
         time.sleep(1)
 
@@ -77,17 +101,15 @@ class MainWindow(wx.Frame):
         self.plotData = [[0] * (6)] * self.plotMem # mem storage for plot
 
         self.fig = Figure((8,6))
-        self.fig.subplots_adjust(hspace=.5) #sub plot spacing
+        self.fig.subplots_adjust(hspace=.5) # sub plot spacing
 
-        self.axes = [] #subplot list
+        self.axes = [] # subplot list
         for i in range(1,7):
             self.axes.append(self.fig.add_subplot(3,2,i, xticks=[], yticks=[0, 500, 1000]))
 
 
     def poll(self):
         self.dataRow = self.arduino.poll()
-        #self.dataRow = (np.random.rand(6)*1000).tolist()
-        #print self.dataRow
 
 
     def save(self):
@@ -99,9 +121,8 @@ class MainWindow(wx.Frame):
 
 
     def draw(self):
-        self.plotData.append(self.dataRow) #adds to the end of the list
-        self.plotData.pop(0) #remove the first item in the list, ie the oldest
-        #print self.plotData
+        self.plotData.append(self.dataRow) # adds to the end of the list
+        self.plotData.pop(0) # remove the first item in the list, ie the oldest
 
         # Plot
         x = np.asarray(self.plotData)
@@ -152,14 +173,11 @@ class MainWindow(wx.Frame):
                 self.recording = False
 
             else:
-                #self.output_file = self.txt_output_file.GetString(0,-1)
                 self.output_file = self.txt_output_file.GetLineText(0)
-                self.t = 0
 
                 # check if file exists - ie may be saving over data
                 if os.path.isfile(self.output_file):
-                    print(self.output_file)
-                    msg = wx.MessageDialog(self, 'Output Directory Exists - Overwrite Data?', 'Yes or No', wx.YES_NO | wx.ICON_QUESTION)
+                    msg = wx.MessageDialog(self, 'Output File %s Exists - Overwrite Data?' %self.output_file, 'Yes or No', wx.YES_NO | wx.ICON_QUESTION)
                     result = msg.ShowModal() == wx.ID_YES
                     msg.Destroy()
 
