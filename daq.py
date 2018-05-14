@@ -10,19 +10,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigCanvas
 from arduino import Arduino
 
-local_platf = platform.system()
-
-if local_platf == 'Linux':
-    arduino_port = '/dev/ttyACM0'
-if local_platf == 'Windows':
-    # For Windows
-    arduino_port = 'COM4'
-else:
-    # Error windows. No Mac version yet
-
-    print ("No Mac version implemented yet. Default to Linux.")
-    arduino_port = '/dev/ttyACM0'
-
 class MainWindow(wx.Frame):
     """ Main frame of the application
     """
@@ -34,16 +21,9 @@ class MainWindow(wx.Frame):
         wx.Frame.__init__(self, None, title=self.title, size=(650,570))
 
         local_platf = platform.system()
-        if local_platf == 'Linux':
-            arduino_port = '/dev/ttyACM0'
-        if local_platf == 'Windows':
-            # For Windows
+        if platform.system() == 'Windows':
             arduino_port = 'COM4'
         else:
-            # Error windows. No Mac version yet
-            msg = wx.MessageDialog(self, 'No Mac version implemented yet. Default to Linux.', 'Warning', wx.OK | wx.ICON_WARNING)
-            msg.ShowModal() == wx.ID_YES
-            msg.Destroy()
             arduino_port = '/dev/ttyACM0'
 
         # Try Arduino
@@ -110,7 +90,8 @@ class MainWindow(wx.Frame):
 
     def poll(self):
         self.dataRow = self.arduino.poll()
-
+        # self.dataRow = (np.random.rand(6)*1000).tolist()
+        # print self.dataRow
 
     def save(self):
         file = open(self.output_file, 'a')
