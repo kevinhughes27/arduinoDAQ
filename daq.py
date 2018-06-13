@@ -20,7 +20,6 @@ class MainWindow(wx.Frame):
     def __init__(self):
         wx.Frame.__init__(self, None, title=self.title, size=(650,570))
 
-        local_platf = platform.system()
         if platform.system() == 'Windows':
             arduino_port = 'COM4'
         else:

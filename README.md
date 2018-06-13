@@ -10,9 +10,7 @@ updated by: Victor H. Martin, June 2018
 
 Description
 -----------
-Updated for running with Python 3.
-
-usage:
+Usage:
 load the ArduinoDAQ program on the Arduino then run the main python program:
   python daq.py
 
@@ -21,6 +19,7 @@ An Arduino program which reads the analog pins and sends the data over the seria
 
 Requirements
 ------------
+Python 3
 
 Dependencies file requirement.txt is provided for easy installation of dependencies using PiP. If you have pip installed
 run the next command in python command line:
