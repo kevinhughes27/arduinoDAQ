@@ -1,0 +1,11 @@
+cycler==0.10.0
+kiwisolver==1.0.1
+matplotlib==2.2.2
+numpy==1.14.2
+pyparsing==2.2.0
+Pypubsub==4.0.0
+pyserial==3.4
+python-dateutil==2.7.2
+pytz==2018.4
+six==1.11.0
+wxPython==4.0.2a1.dev3717+d4bd2fe
